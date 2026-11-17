@@ -1,5 +1,6 @@
 package com.examen.mx.clienteapi.config;
 
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,19 @@ public class ClienteDatosClientConfig {
         return builder
                 .baseUrl(baseUrl)
                 .requestFactory(requestFactory)
+                .requestInterceptor((request, body, execution) -> {
+                    String correlationId =
+                            ThreadContext.get(CorrelationIdFilter.CONTEXT_KEY);
+
+                    if (correlationId != null && !correlationId.isBlank()) {
+                        request.getHeaders().set(
+                                CorrelationIdFilter.HEADER,
+                                correlationId
+                        );
+                    }
+
+                    return execution.execute(request, body);
+                })
                 .build();
     }
 }
