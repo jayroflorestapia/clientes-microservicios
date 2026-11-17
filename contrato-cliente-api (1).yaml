@@ -1,0 +1,403 @@
+swagger: "2.0"
+info:
+  title: "cliente-api"
+  description: >-
+    Contrato del microservicio 1 (cliente-api) del examen diagnóstico.
+    El candidato debe implementar este contrato tal como está definido:
+    rutas, nombres de campos, códigos HTTP, encabezados y formato de error.
+    El contrato no debe modificarse. Si encuentra una ambigüedad, documente
+    su interpretación en el README.
+  version: "1.0.0"
+host: "localhost:8080"
+basePath: "/api/v1"
+schemes:
+  - "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+parameters:
+  ClienteId:
+    name: "id"
+    in: "path"
+    description: "Identificador del cliente devuelto en el alta."
+    required: true
+    type: "integer"
+    format: "int64"
+    minimum: 1
+  CorrelationId:
+    name: "X-Correlation-Id"
+    in: "header"
+    description: >-
+      Identificador para dar seguimiento a la petición. Si no se envía,
+      el microservicio lo genera. Se propaga al microservicio 2 y se
+      devuelve en la respuesta.
+    required: false
+    type: "string"
+
+responses:
+  BadRequest:
+    description: >-
+      Petición inválida. Incluye errores de validación de campos, JSON mal
+      formado y el intento de registrar un cliente con un nombre completo
+      que ya existe.
+    headers:
+      X-Correlation-Id:
+        type: "string"
+    schema:
+      $ref: "#/definitions/ErrorResponse"
+  NotFound:
+    description: "No existe un cliente con el identificador indicado."
+    headers:
+      X-Correlation-Id:
+        type: "string"
+    schema:
+      $ref: "#/definitions/ErrorResponse"
+  ServiceUnavailable:
+    description: >-
+      El microservicio 2 no respondió o excedió el tiempo de espera
+      configurado.
+    headers:
+      X-Correlation-Id:
+        type: "string"
+    schema:
+      $ref: "#/definitions/ErrorResponse"
+  InternalError:
+    description: "Error no controlado. No debe exponer trazas internas."
+    headers:
+      X-Correlation-Id:
+        type: "string"
+    schema:
+      $ref: "#/definitions/ErrorResponse"
+
+paths:
+  /clientes:
+    post:
+      summary: "Alta de cliente"
+      operationId: "crearCliente"
+      parameters:
+        - $ref: "#/parameters/CorrelationId"
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/ClienteRequest"
+      responses:
+        "201":
+          description: "Cliente creado."
+          headers:
+            Location:
+              type: "string"
+              description: "URL del cliente creado, por ejemplo /api/v1/clientes/1"
+            X-Correlation-Id:
+              type: "string"
+          schema:
+            $ref: "#/definitions/ClienteCreadoResponse"
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalError"
+        "503":
+          $ref: "#/responses/ServiceUnavailable"
+    get:
+      summary: "Listado paginado de clientes (OPCIONAL)"
+      description: >-
+        Implementación opcional. Si se implementa, debe respetar este
+        contrato.
+      operationId: "listarClientes"
+      parameters:
+        - $ref: "#/parameters/CorrelationId"
+        - name: "page"
+          in: "query"
+          required: false
+          type: "integer"
+          minimum: 0
+          default: 0
+        - name: "size"
+          in: "query"
+          required: false
+          type: "integer"
+          minimum: 1
+          maximum: 100
+          default: 10
+      responses:
+        "200":
+          description: "Página de clientes."
+          headers:
+            X-Correlation-Id:
+              type: "string"
+          schema:
+            $ref: "#/definitions/PaginaClientesResponse"
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalError"
+        "503":
+          $ref: "#/responses/ServiceUnavailable"
+
+  /clientes/{id}:
+    get:
+      summary: "Consulta de cliente"
+      operationId: "consultarCliente"
+      parameters:
+        - $ref: "#/parameters/ClienteId"
+        - $ref: "#/parameters/CorrelationId"
+      responses:
+        "200":
+          description: "Cliente encontrado."
+          headers:
+            X-Correlation-Id:
+              type: "string"
+          schema:
+            $ref: "#/definitions/ClienteResponse"
+        "400":
+          $ref: "#/responses/BadRequest"
+        "404":
+          $ref: "#/responses/NotFound"
+        "500":
+          $ref: "#/responses/InternalError"
+        "503":
+          $ref: "#/responses/ServiceUnavailable"
+    put:
+      summary: "Actualización completa de cliente"
+      description: >-
+        Reemplaza todos los datos del cliente. El identificador se toma
+        únicamente de la ruta.
+      operationId: "actualizarCliente"
+      parameters:
+        - $ref: "#/parameters/ClienteId"
+        - $ref: "#/parameters/CorrelationId"
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/ClienteRequest"
+      responses:
+        "200":
+          description: "Cliente actualizado."
+          headers:
+            X-Correlation-Id:
+              type: "string"
+          schema:
+            $ref: "#/definitions/ClienteResponse"
+        "400":
+          $ref: "#/responses/BadRequest"
+        "404":
+          $ref: "#/responses/NotFound"
+        "500":
+          $ref: "#/responses/InternalError"
+        "503":
+          $ref: "#/responses/ServiceUnavailable"
+    delete:
+      summary: "Eliminación de cliente"
+      description: "Eliminación física del registro."
+      operationId: "eliminarCliente"
+      parameters:
+        - $ref: "#/parameters/ClienteId"
+        - $ref: "#/parameters/CorrelationId"
+      responses:
+        "200":
+          description: "El cliente existía y fue eliminado."
+          headers:
+            X-Correlation-Id:
+              type: "string"
+          schema:
+            $ref: "#/definitions/ClienteEliminadoResponse"
+        "400":
+          $ref: "#/responses/BadRequest"
+        "404":
+          $ref: "#/responses/NotFound"
+        "500":
+          $ref: "#/responses/InternalError"
+        "503":
+          $ref: "#/responses/ServiceUnavailable"
+
+definitions:
+  ClienteRequest:
+    type: "object"
+    description: >-
+      Datos de entrada para alta y actualización. No incluye el
+      identificador; cualquier campo adicional se ignora.
+    required:
+      - "nombre"
+      - "apellidoPaterno"
+      - "fechaNacimiento"
+      - "sexo"
+      - "correo"
+      - "telefono"
+    properties:
+      nombre:
+        type: "string"
+        minLength: 1
+        maxLength: 50
+        example: "Juan"
+      apellidoPaterno:
+        type: "string"
+        minLength: 1
+        maxLength: 50
+        example: "Pérez"
+      apellidoMaterno:
+        type: "string"
+        maxLength: 50
+        description: "Opcional."
+        example: "López"
+      fechaNacimiento:
+        type: "string"
+        format: "date"
+        description: "Formato yyyy-MM-dd. No puede ser una fecha futura."
+        example: "1990-05-10"
+      sexo:
+        type: "string"
+        enum:
+          - "M"
+          - "F"
+        example: "M"
+      correo:
+        type: "string"
+        format: "email"
+        maxLength: 100
+        example: "juan.perez@correo.com"
+      telefono:
+        type: "string"
+        pattern: "^[0-9]{10}$"
+        description: "Exactamente 10 dígitos numéricos."
+        example: "5512345678"
+
+  ClienteResponse:
+    type: "object"
+    required:
+      - "id"
+      - "nombre"
+      - "apellidoPaterno"
+      - "fechaNacimiento"
+      - "sexo"
+      - "correo"
+      - "telefono"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      nombre:
+        type: "string"
+        example: "Juan"
+      apellidoPaterno:
+        type: "string"
+        example: "Pérez"
+      apellidoMaterno:
+        type: "string"
+        example: "López"
+      fechaNacimiento:
+        type: "string"
+        format: "date"
+        example: "1990-05-10"
+      sexo:
+        type: "string"
+        enum:
+          - "M"
+          - "F"
+        example: "M"
+      correo:
+        type: "string"
+        example: "juan.perez@correo.com"
+      telefono:
+        type: "string"
+        example: "5512345678"
+
+  ClienteCreadoResponse:
+    type: "object"
+    required:
+      - "id"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: 1
+
+  ClienteEliminadoResponse:
+    type: "object"
+    required:
+      - "id"
+      - "mensaje"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      mensaje:
+        type: "string"
+        example: "Cliente eliminado"
+
+  PaginaClientesResponse:
+    type: "object"
+    required:
+      - "contenido"
+      - "pagina"
+      - "tamanio"
+      - "totalElementos"
+      - "totalPaginas"
+    properties:
+      contenido:
+        type: "array"
+        items:
+          $ref: "#/definitions/ClienteResponse"
+      pagina:
+        type: "integer"
+        example: 0
+      tamanio:
+        type: "integer"
+        example: 10
+      totalElementos:
+        type: "integer"
+        format: "int64"
+        example: 25
+      totalPaginas:
+        type: "integer"
+        example: 3
+
+  ErrorResponse:
+    type: "object"
+    description: "Formato único para todas las respuestas de error."
+    required:
+      - "status"
+      - "mensaje"
+      - "timestamp"
+      - "path"
+    properties:
+      status:
+        type: "integer"
+        example: 400
+      mensaje:
+        type: "string"
+        example: "La petición contiene datos inválidos"
+      detalles:
+        type: "array"
+        description: >-
+          Detalle por campo. Obligatorio en errores de validación; puede
+          omitirse en los demás casos.
+        items:
+          $ref: "#/definitions/ErrorCampo"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        example: "2026-11-12T17:30:00Z"
+      path:
+        type: "string"
+        example: "/api/v1/clientes"
+      correlationId:
+        type: "string"
+        example: "3f2b6c1e-8a4d-4b7e-9c1a-2d5e7f9a1b3c"
+
+  ErrorCampo:
+    type: "object"
+    required:
+      - "campo"
+      - "mensaje"
+    properties:
+      campo:
+        type: "string"
+        example: "telefono"
+      mensaje:
+        type: "string"
+        example: "Debe contener exactamente 10 dígitos"
