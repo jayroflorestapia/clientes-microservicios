@@ -5,13 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02f657c2-cdca-4f34-85e2-5066960b0ed7" name="Changes" comment="prueba">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/git_toolbox_prj.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contrato-cliente-api (1).yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente-datos/src/main/java/com/examen/mx/clientedatos/controller/ClienteInternoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente-datos/src/main/java/com/examen/mx/clientedatos/dto/ClienteEliminadoResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente-datos/src/main/java/com/examen/mx/clientedatos/dto/ClienteRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente-datos/src/main/java/com/examen/mx/clientedatos/dto/ClienteResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente-datos/src/main/java/com/examen/mx/clientedatos/exception/ClienteDuplicadoException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente-datos/src/main/java/com/examen/mx/clientedatos/exception/ClienteNoEncontradoException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente-datos/src/main/java/com/examen/mx/clientedatos/model/Cliente.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente-datos/src/main/java/com/examen/mx/clientedatos/repository/ClienteRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente-datos/src/main/java/com/examen/mx/clientedatos/service/ClienteService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente-api/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cliente-api/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente-datos/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cliente-datos/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente-datos/src/main/resources/application.yaml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,7 +25,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/cliente-datos" />
     <option name="ROOT_SYNC" value="SYNC" />
   </component>
   <component name="GitHubPullRequestSearchHistory"><![CDATA[{
@@ -46,26 +52,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Cursos/Java/clientes-microservicios&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.build&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Cursos/Java/clientes-microservicios/cliente-datos/src/main/resources",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.jshint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.jshint": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "configurable.group.build"
+  },
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "JAVA",
+      "TEXT"
+    ]
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Cursos\Java\clientes-microservicios\cliente-datos\src\main\resources" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
